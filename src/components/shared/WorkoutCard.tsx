@@ -4,6 +4,7 @@ import React from "react";
 
 const WorkoutCard = ({workout}) => {
   return (
+    <Link href={`/workouts/${workout.id}`} className="block">
     <div className="bg-[#15161B] border border-[#222329] rounded-xl overflow-hidden group hover:border-[#C6FF00]/50 transition-all duration-300">
       {/* Workout Image */}
       <div className="h-[200px] overflow-hidden">
@@ -51,6 +52,7 @@ const WorkoutCard = ({workout}) => {
         </div>
       </div>
     </div>
+    </Link>
   );
 };
 
