@@ -1,21 +1,37 @@
 "use client";
 
+import PlanCard from "@/components/shared/PlanCard";
 import { FitLogContext } from "@/context/FitlogContext";
 import { IWorkout } from "@/types/Workout";
-import Image from "next/image";
 import Link from "next/link";
 import { useContext, useState } from "react";
 
 const MyPlan = () => {
-  const { todayPlan, saved } = useContext(FitLogContext);
+  const { todayPlan, saved, isLoaded } = useContext(FitLogContext);
   const [activeTab, setActiveTab] = useState<"plan" | "saved">("plan");
   const [sortBy, setSortBy] = useState<"duration" | "calories" | "rating">(
     "duration",
   );
 
+  // Loading (after all hooks)
+  if (!isLoaded) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-32">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#222329] border-t-[#C6FF00]"></div>
+        <p className="text-[#9296A1] text-sm">Loading workouts…</p>
+      </div>
+    );
+  }
+
   // Metrics (Today's Plan theke)
-  const totalMinutes = todayPlan.reduce((sum, w) => sum + w.duration, 0);
-  const totalCalories = todayPlan.reduce((sum, w) => sum + w.caloriesBurned, 0);
+  const totalMinutes = todayPlan.reduce(
+    (sum: number, w: IWorkout) => sum + w.duration,
+    0,
+  );
+  const totalCalories = todayPlan.reduce(
+    (sum: number, w: IWorkout) => sum + w.caloriesBurned,
+    0,
+  );
 
   // Sort
   const sortWorkouts = (workouts: IWorkout[]) => {
@@ -35,26 +51,32 @@ const MyPlan = () => {
   return (
     <section className="max-w-[1280px] mx-auto w-full px-6 py-12">
       {/* Title */}
-      <h1 className="text-white text-4xl font-bold uppercase">My Plan</h1>
+      <h1 className="font-display text-white text-4xl font-bold uppercase">
+        MY PLAN
+      </h1>
       <p className="text-[#9296A1] text-sm mt-2">
         Cap of five lifts for today. Finish them, then load more.
       </p>
 
       {/* Metrics */}
       <div className="mt-8 grid grid-cols-3 rounded-xl border border-[#222329] bg-[#15161B]">
-        <div className="p-5">
+        <div className="p-4 sm:p-5">
           <p className="text-[#9296A1] text-xs">Exercises</p>
-          <p className="text-[#C6FF00] text-3xl font-bold mt-2">
+          <p className="font-display text-[#C6FF00] text-2xl sm:text-3xl font-bold mt-2">
             {todayPlan.length}
           </p>
         </div>
-        <div className="p-5 border-l border-[#222329]">
+        <div className="p-4 sm:p-5 border-l border-[#222329]">
           <p className="text-[#9296A1] text-xs">Minutes</p>
-          <p className="text-white text-3xl font-bold mt-2">{totalMinutes}</p>
+          <p className="font-display text-white text-2xl sm:text-3xl font-bold mt-2">
+            {totalMinutes}
+          </p>
         </div>
-        <div className="p-5 border-l border-[#222329]">
+        <div className="p-4 sm:p-5 border-l border-[#222329]">
           <p className="text-[#9296A1] text-xs">Calories</p>
-          <p className="text-white text-3xl font-bold mt-2">{totalCalories}</p>
+          <p className="font-display text-white text-2xl sm:text-3xl font-bold mt-2">
+            {totalCalories}
+          </p>
         </div>
       </div>
 
@@ -102,9 +124,9 @@ const MyPlan = () => {
       {/* List / Empty State */}
       <div className="mt-6">
         {currentList.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-[#2A2B31] py-20 text-center">
-            <h3 className="text-white text-xl font-bold uppercase">
-              Nothing here yet
+          <div className="rounded-xl border border-dashed border-[#2A2B31] px-6 py-20 text-center">
+            <h3 className="font-display text-white text-xl font-bold uppercase">
+              NOTHING HERE YET
             </h3>
             <p className="text-[#9296A1] text-xs mt-2">
               Browse the library and add a lift to get today moving.
@@ -118,38 +140,8 @@ const MyPlan = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {currentList.map((workout) => (
-              <div
-                key={workout.id}
-                className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-xl border border-[#222329] bg-[#15161B] p-4"
-              >
-                <Image
-                  src={workout.image}
-                  alt={workout.name}
-                  width={100}
-                  height={100}
-                  className="h-20 w-20 rounded-lg object-cover"
-                />
-                <div className="flex-1">
-                  <h3 className="text-white font-bold uppercase">
-                    {workout.name}
-                  </h3>
-                  <p className="text-[#9296A1] text-xs mt-1">
-                    {workout.equipment}
-                  </p>
-                  <div className="flex gap-4 mt-2 text-xs text-[#9296A1]">
-                    <span>◷ {workout.duration} min</span>
-                    <span>🔥 {workout.caloriesBurned} kcal</span>
-                    <span className="text-[#C6FF00]">★ {workout.rating}</span>
-                  </div>
-                </div>
-                <Link
-                  href={`/workouts/${workout.id}`}
-                  className="rounded-lg border border-[#C6FF00] px-4 py-2 text-xs font-bold text-[#C6FF00]"
-                >
-                  View Details
-                </Link>
-              </div>
+            {currentList.map((workout: IWorkout) => (
+              <PlanCard key={workout.id} workout={workout} listType={activeTab} />
             ))}
           </div>
         )}

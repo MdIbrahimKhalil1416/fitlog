@@ -5,18 +5,17 @@ import logo from "@/assets/logo.png";
 const Footer = () => {
   return (
     <footer className="w-full bg-[#0B0B0D] border-t border-[#1E1E22]">
-      <div className="max-w-[1280px] mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-[1280px] mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center">
         {/* Logo */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <Image
             src={logo}
             alt="FitLog Icon"
-            width={16}
-            height={16}
+            width={20}
+            height={20}
             className="object-contain"
           />
-
-          <span className="text-white text-[11px] font-extrabold tracking-wide">
+          <span className="font-display text-white text-sm font-bold tracking-wide">
             FITLOG
           </span>
         </div>
